@@ -44,14 +44,14 @@ class DashboardController extends Controller
         // User aktif (login hari ini) - dari aktivitas_user
         $userAktif = User::whereHas('aktivitasUser', function($q) {
             $q->whereDate('created_at', today())
-              ->where('aksi', 'login');
+            ->where('aksi', 'login');
         })->count();
         
-        // Stok masuk vs keluar (7 hari terakhir)
+        // Stok masuk vs keluar (7 hari terakhir) - PERBAIKAN DI SINI
         $stokFlow = TransaksiStok::select(
                 DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(CASE WHEN jenis = "masuk" THEN jumlah ELSE 0 END) as masuk'),
-                DB::raw('SUM(CASE WHEN jenis = "keluar" THEN jumlah ELSE 0 END) as keluar')
+                DB::raw("SUM(CASE WHEN jenis = 'masuk' THEN jumlah ELSE 0 END) as masuk"),
+                DB::raw("SUM(CASE WHEN jenis = 'keluar' THEN jumlah ELSE 0 END) as keluar")
             )
             ->where('created_at', '>=', now()->subDays(7))
             ->groupBy(DB::raw('DATE(created_at)'))
