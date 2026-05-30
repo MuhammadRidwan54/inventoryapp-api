@@ -11,8 +11,8 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->enum('jenis', ['personal', 'system']);
-            $table->string('judul')->nullable(); // Untuk personal chat
+            $table->string('jenis'); // personal, system
+            $table->string('judul')->nullable();
             $table->timestamps();
             
             $table->index('jenis');

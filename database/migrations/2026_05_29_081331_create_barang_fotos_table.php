@@ -12,8 +12,8 @@ return new class extends Migration
         Schema::create('barang_fotos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('barang_id')->constrained('barang')->onDelete('cascade');
-            $table->string('url'); // URL dari Cloudinary
-            $table->string('public_id')->nullable(); // Cloudinary public ID untuk delete nanti
+            $table->string('url');
+            $table->string('public_id')->nullable();
             $table->boolean('is_primary')->default(false);
             $table->integer('urutan')->default(0);
             $table->timestamps();

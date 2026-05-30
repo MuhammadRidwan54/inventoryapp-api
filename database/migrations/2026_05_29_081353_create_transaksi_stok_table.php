@@ -13,15 +13,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('barang_id')->constrained('barang')->onDelete('restrict');
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
-            $table->enum('jenis', ['masuk', 'keluar', 'adjust']);
+            $table->string('jenis'); // masuk, keluar, adjust
             $table->integer('jumlah');
             $table->integer('stok_sebelum');
             $table->integer('stok_sesudah');
             $table->text('keterangan')->nullable();
-            $table->string('referensi')->nullable(); // No invoice, no PO, dll
+            $table->string('referensi')->nullable();
             $table->timestamps();
             
-            // Index untuk query cepat
             $table->index('barang_id');
             $table->index('user_id');
             $table->index('jenis');

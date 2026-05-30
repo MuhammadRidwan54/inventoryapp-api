@@ -13,14 +13,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('barang_id')->constrained('barang')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
-            $table->string('field'); // field yang berubah: stok, nama, harga, dll
+            $table->string('field');
             $table->text('old_value')->nullable();
             $table->text('new_value')->nullable();
-            $table->string('aksi'); // update, delete, restore
-            $table->ipAddress()->nullable();
+            $table->string('aksi');
+            $table->string('ip_address')->nullable();
             $table->timestamps();
             
-            // Index untuk query cepat
             $table->index('barang_id');
             $table->index('user_id');
             $table->index('created_at');

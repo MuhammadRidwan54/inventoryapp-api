@@ -14,11 +14,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['owner', 'admin', 'gudang'])->default('gudang');
-            $table->rememberToken();
+            $table->string('role')->default('gudang');
             $table->timestamps();
             
-            // Index untuk query cepat
             $table->index('role');
             $table->index('email');
         });

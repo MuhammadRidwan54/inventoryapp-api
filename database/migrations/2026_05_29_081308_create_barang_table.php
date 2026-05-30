@@ -12,17 +12,16 @@ return new class extends Migration
         Schema::create('barang', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('sku')->unique(); // Stock Keeping Unit
+            $table->string('sku')->unique();
             $table->text('deskripsi')->nullable();
             $table->integer('stok')->default(0);
-            $table->integer('stok_minimal')->default(0); // Alert jika stok di bawah ini
+            $table->integer('stok_minimal')->default(0);
             $table->string('satuan')->default('pcs');
             $table->foreignId('kategori_id')->constrained('kategori')->onDelete('restrict');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
             $table->foreignId('created_by')->constrained('users')->onDelete('restrict');
             $table->timestamps();
             
-            // Index untuk query cepat
             $table->index('nama');
             $table->index('sku');
             $table->index('stok');

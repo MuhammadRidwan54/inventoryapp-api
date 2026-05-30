@@ -37,13 +37,32 @@ class DatabaseSeeder extends Seeder
         ]);
         
         // Create categories
-        $kategoriResleting = Kategori::create(['nama' => 'Resleting', 'deskripsi' => 'Berbagai jenis resleting']);
-        $kategoriRing = Kategori::create(['nama' => 'Ring', 'deskripsi' => 'Ring besi dan plastik']);
-        $kategoriKain = Kategori::create(['nama' => 'Kain', 'deskripsi' => 'Kain bahan baku']);
+        $kategoriResleting = Kategori::create([
+            'nama' => 'Resleting', 
+            'deskripsi' => 'Berbagai jenis resleting'
+        ]);
+        
+        $kategoriRing = Kategori::create([
+            'nama' => 'Ring', 
+            'deskripsi' => 'Ring besi dan plastik'
+        ]);
+        
+        $kategoriKain = Kategori::create([
+            'nama' => 'Kain', 
+            'deskripsi' => 'Kain bahan baku'
+        ]);
         
         // Create suppliers
-        $supplier1 = Supplier::create(['nama' => 'PT Sinar Resleting', 'kontak' => '08123456789', 'email' => 'sinar@resleting.com']);
-        $supplier2 = Supplier::create(['nama' => 'CV Maju Ring', 'kontak' => '08198765432']);
+        $supplier1 = Supplier::create([
+            'nama' => 'PT Sinar Resleting', 
+            'kontak' => '08123456789', 
+            'email' => 'sinar@resleting.com'
+        ]);
+        
+        $supplier2 = Supplier::create([
+            'nama' => 'CV Maju Ring', 
+            'kontak' => '08198765432'
+        ]);
         
         // Create products
         Barang::create([

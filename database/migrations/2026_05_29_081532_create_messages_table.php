@@ -15,11 +15,10 @@ return new class extends Migration
             $table->foreignId('sender_id')->nullable()->constrained('users')->onDelete('set null');
             $table->boolean('is_system')->default(false);
             $table->text('body');
-            $table->json('meta')->nullable(); // extra data: barang_id, transaksi_id, dll
+            $table->json('meta')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
             
-            // Index untuk query cepat
             $table->index('conversation_id');
             $table->index('sender_id');
             $table->index('is_system');

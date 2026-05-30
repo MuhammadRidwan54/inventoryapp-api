@@ -16,7 +16,6 @@ return new class extends Migration
             $table->timestamp('last_read_at')->nullable();
             $table->timestamps();
             
-            // Unique: satu user tidak bisa double join di satu conversation
             $table->unique(['conversation_id', 'user_id']);
             $table->index('user_id');
             $table->index('conversation_id');
