@@ -109,5 +109,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/user/{userId}', [AktivitasController::class, 'userActivities']);
             Route::get('/{id}', [AktivitasController::class, 'show']);
         });
+
+        Route::get('/health', function () {
+            return response()->json(['status' => 'ok', 'time' => now()]);
+        });
     });
 });
