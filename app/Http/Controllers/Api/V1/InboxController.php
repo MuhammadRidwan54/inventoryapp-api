@@ -25,56 +25,17 @@ class InboxController extends Controller
     {
         $user = $request->user();
         
+        // Simplified query
         $conversations = $user->conversations()
-            ->with([
-                'messages' => function($q) {
-                    $q->latest()->limit(1);
-                },
-                'members' => function($q) use ($user) {
-                    $q->select('users.id', 'users.name', 'users.email', 'users.role');
-                }
-            ])
-            ->withCount(['messages as unread_count' => function($q) use ($user) {
-                $lastRead = ConversationMember::where('conversation_id', $q->getQuery()->from)
-                    ->where('user_id', $user->id)
-                    ->value('last_read_at');
-                
-                if ($lastRead) {
-                    $q->where('created_at', '>', $lastRead);
-                }
+            ->with(['messages' => function($q) {
+                $q->latest()->limit(1);
             }])
             ->latest('updated_at')
-            ->paginate($request->per_page ?? 20);
-        
-        // Format response
-        $result = $conversations->through(function ($conversation) use ($user) {
-            $lastMessage = $conversation->messages->first();
-            $otherMembers = $conversation->members->filter(function($member) use ($user) {
-                return $member->id !== $user->id;
-            });
-            
-            return [
-                'id' => $conversation->id,
-                'jenis' => $conversation->jenis,
-                'judul' => $conversation->judul ?? ($otherMembers->first()?->name ?? 'System'),
-                'last_message' => $lastMessage ? [
-                    'body' => $lastMessage->body,
-                    'is_system' => $lastMessage->is_system,
-                    'created_at' => $lastMessage->created_at,
-                ] : null,
-                'unread_count' => $conversation->unread_count,
-                'updated_at' => $conversation->updated_at,
-            ];
-        });
+            ->paginate(20);
         
         return response()->json([
             'message' => 'success',
-            'data' => $result,
-            'pagination' => [
-                'current_page' => $conversations->currentPage(),
-                'total' => $conversations->total(),
-                'per_page' => $conversations->perPage(),
-            ]
+            'data' => $conversations
         ]);
     }
     

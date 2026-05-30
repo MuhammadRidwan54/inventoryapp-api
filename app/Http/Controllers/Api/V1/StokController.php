@@ -459,14 +459,15 @@ class StokController extends Controller
     {
         $days = $request->days ?? 7;
         
+        // PostgreSQL compatible query
         $mutasi = TransaksiStok::select(
-                DB::raw('DATE(created_at) as tanggal'),
-                DB::raw('SUM(CASE WHEN jenis = "masuk" THEN jumlah ELSE 0 END) as stok_masuk'),
-                DB::raw('SUM(CASE WHEN jenis = "keluar" THEN jumlah ELSE 0 END) as stok_keluar')
+                DB::raw("DATE(created_at) as tanggal"),
+                DB::raw("SUM(CASE WHEN jenis = 'masuk' THEN jumlah ELSE 0 END) as stok_masuk"),
+                DB::raw("SUM(CASE WHEN jenis = 'keluar' THEN jumlah ELSE 0 END) as stok_keluar")
             )
             ->where('created_at', '>=', now()->subDays($days))
-            ->groupBy(DB::raw('DATE(created_at)'))
-            ->orderBy('tanggal')
+            ->groupBy(DB::raw("DATE(created_at)"))
+            ->orderBy('tanggal', 'asc')
             ->get();
         
         return response()->json([

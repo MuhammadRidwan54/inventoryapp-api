@@ -113,21 +113,15 @@ class AktivitasController extends Controller
     // GET ACTIVITY STATISTICS (dashboard for owner)
     public function statistics(Request $request)
     {
-        if ($request->user()->role !== 'owner') {
-            return response()->json([
-                'message' => 'Akses ditolak. Hanya owner yang dapat melihat statistik aktivitas.'
-            ], 403);
-        }
-
         // Total activities today
         $totalToday = AktivitasUser::whereDate('created_at', today())->count();
-
+        
         // Total activities this week
-        $totalThisWeek = AktivitasUser::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
-
-        // Total activities this month
-        $totalThisMonth = AktivitasUser::whereMonth('created_at', now()->month)->count();
-
+        $totalThisWeek = AktivitasUser::whereBetween('created_at', [
+            now()->startOfWeek(), 
+            now()->endOfWeek()
+        ])->count();
+        
         // Top 5 most active users
         $topUsers = AktivitasUser::select('user_id', DB::raw('count(*) as total'))
             ->with('user:id,name,email,role')
@@ -135,42 +129,15 @@ class AktivitasController extends Controller
             ->orderBy('total', 'desc')
             ->limit(5)
             ->get();
-
-        // Most common actions
-        $topActions = AktivitasUser::select('aksi', DB::raw('count(*) as total'))
-            ->groupBy('aksi')
-            ->orderBy('total', 'desc')
-            ->limit(10)
-            ->get();
-
-        // Activities by role
-        $byRole = AktivitasUser::select('users.role', DB::raw('count(*) as total'))
-            ->join('users', 'aktivitas_user.user_id', '=', 'users.id')
-            ->groupBy('users.role')
-            ->get();
-
-        // Activities per hour today
-        $perHour = AktivitasUser::select(
-                DB::raw('HOUR(created_at) as hour'),
-                DB::raw('count(*) as total')
-            )
-            ->whereDate('created_at', today())
-            ->groupBy(DB::raw('HOUR(created_at)'))
-            ->orderBy('hour')
-            ->get();
-
+        
         return response()->json([
             'message' => 'success',
             'data' => [
                 'summary' => [
                     'today' => $totalToday,
                     'this_week' => $totalThisWeek,
-                    'this_month' => $totalThisMonth,
                 ],
                 'top_users' => $topUsers,
-                'top_actions' => $topActions,
-                'by_role' => $byRole,
-                'activity_per_hour' => $perHour,
             ]
         ]);
     }
