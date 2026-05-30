@@ -113,5 +113,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/health', function () {
             return response()->json(['status' => 'ok', 'time' => now()]);
         });
+
+        Route::get('/ping', function () {
+            return response()->json(['pong' => true, 'time' => now()]);
+        });
     });
 });
