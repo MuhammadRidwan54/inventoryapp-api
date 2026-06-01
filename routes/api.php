@@ -31,7 +31,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
         
         // MASTER DATA - hanya owner & admin
-        Route::middleware('role:owner,admin')->prefix('master')->group(function () {
+        Route::middleware('role:owner,admin,gudang')->prefix('master')->group(function () {
             
             // ========== KATEGORI ==========
             // GET /api/v1/master/kategori
