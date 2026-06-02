@@ -75,11 +75,11 @@ Route::prefix('v1')->group(function () {
             Route::post('/keluar', [StokController::class, 'keluar']);
             Route::get('/histori/{barangId}', [StokController::class, 'histori']);
             Route::get('/mutasi', [StokController::class, 'mutasi']);
+            Route::get('/rekap', [StokController::class, 'rekap']);
             
             // Hanya owner & admin yang bisa akses
             Route::middleware('role:owner,admin')->group(function () {
                 Route::post('/adjust', [StokController::class, 'adjust']);
-                Route::get('/rekap', [StokController::class, 'rekap']);
             });
         });
         
