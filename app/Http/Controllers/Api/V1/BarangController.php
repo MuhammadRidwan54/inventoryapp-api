@@ -32,9 +32,12 @@ class BarangController extends Controller
         $filename = "barang_{$barangId}_{$index}_" . time() . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('barang', $filename, 'public');
         
+        // Gunakan APP_URL + Storage::url
+        $fullUrl = env('APP_URL') . Storage::url($path);
+        
         return [
-            'url' => Storage::url($path),
-            'public_id' => $path, // Simpan path untuk delete nanti
+            'url' => $fullUrl,
+            'public_id' => $path,
         ];
     }
     
