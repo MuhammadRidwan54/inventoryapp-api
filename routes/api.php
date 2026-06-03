@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\AktivitasController;
 use App\Http\Controllers\Api\V1\BarangController;
 use App\Http\Controllers\Api\V1\KategoriController;
 use App\Http\Controllers\Api\V1\SupplierController;
+use App\Http\Controllers\Api\V1\UserController;
 
 // Prefix: /api/v1
 Route::prefix('v1')->group(function () {
@@ -29,6 +30,10 @@ Route::prefix('v1')->group(function () {
         
         // Dashboard (akses semua role, tapi isinya beda)
         Route::get('/dashboard', [DashboardController::class, 'index']);
+
+        // USERS (untuk chat)
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/search', [UserController::class, 'search']);
         
         // MASTER DATA - hanya owner & admin
         Route::middleware('role:owner,admin,gudang')->prefix('master')->group(function () {
