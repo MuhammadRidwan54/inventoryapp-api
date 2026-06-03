@@ -1,5 +1,4 @@
 <?php
-// app/Services/CloudinaryService.php
 
 namespace App\Services;
 
@@ -23,30 +22,19 @@ class CloudinaryService
         ]);
     }
 
-    /**
-     * Upload file ke Cloudinary
-     */
-    public function upload($file, array $options = [])
+    public function upload($file, $folder = 'inventoryapp/barang')
     {
-        $defaultOptions = [
-            'folder' => 'inventoryapp/barang',
-            'resource_type' => 'image',
-        ];
-
-        $options = array_merge($defaultOptions, $options);
-
-        $result = $this->cloudinary->uploadApi()->upload($file->getRealPath(), $options);
+        $result = $this->cloudinary->uploadApi()->upload($file->getRealPath(), [
+            'folder' => $folder,
+        ]);
 
         return (object) [
-            'secure_url' => $result['secure_url'],
-            'public_id'  => $result['public_id'],
+            'url' => $result['secure_url'],
+            'public_id' => $result['public_id'],
         ];
     }
 
-    /**
-     * Delete file dari Cloudinary
-     */
-    public function delete(string $publicId)
+    public function delete($publicId)
     {
         return $this->cloudinary->uploadApi()->destroy($publicId);
     }
