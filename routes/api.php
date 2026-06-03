@@ -66,6 +66,7 @@ Route::prefix('v1')->group(function () {
             // Extra routes untuk foto barang
             Route::delete('barang/{barang}/foto/{foto}', [BarangController::class, 'deleteFoto']);
             Route::put('barang/{barang}/foto/{foto}/primary', [BarangController::class, 'setPrimaryFoto']);
+            Route::post('barang/{barang}/fotos', [BarangController::class, 'uploadFoto']);
         });
         
         // STOK - gudang, admin, owner bisa

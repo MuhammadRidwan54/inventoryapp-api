@@ -317,4 +317,42 @@ class BarangController extends Controller
             'message' => 'Foto utama berhasil diubah'
         ]);
     }
+
+    public function uploadFoto(Request $request, Barang $barang)
+    {
+        $request->validate([
+            'fotos' => 'required|array',
+            'fotos.*' => 'image|mimes:jpeg,png,jpg|max:5120'
+        ]);
+
+        $uploadedFotos = [];
+        
+        foreach ($request->file('fotos') as $index => $foto) {
+            try {
+                $uploadResult = $this->cloudinary->upload($foto);
+                
+                $barangFoto = BarangFoto::create([
+                    'barang_id' => $barang->id,
+                    'url' => $uploadResult->url,
+                    'public_id' => $uploadResult->public_id,
+                    'is_primary' => $barang->fotos()->count() === 0,
+                    'urutan' => $barang->fotos()->count(),
+                ]);
+                
+                $uploadedFotos[] = $barangFoto;
+                
+            } catch (\Exception $e) {
+                Log::error('Upload foto error: ' . $e->getMessage());
+                return response()->json([
+                    'message' => 'Gagal upload foto',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+        
+        return response()->json([
+            'message' => 'Foto berhasil diupload',
+            'data' => $uploadedFotos
+        ]);
+    }
 }
