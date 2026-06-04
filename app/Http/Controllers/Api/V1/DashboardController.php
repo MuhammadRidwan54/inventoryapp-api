@@ -123,4 +123,17 @@ class DashboardController extends Controller
             'stok_menipis' => $stokMenipis,
         ];
     }
+
+    public function getSummary(Request $request)
+    {
+        $totalBarang = Barang::count();
+        $totalStok = Barang::sum('stok');
+        $stokMenipis = Barang::whereRaw('stok <= stok_minimal')->count();
+        
+        return response()->json([
+            'total_barang' => $totalBarang,
+            'total_stok' => $totalStok,
+            'stok_menipis' => $stokMenipis,
+        ]);
+    }
 }

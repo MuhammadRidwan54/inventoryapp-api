@@ -30,6 +30,7 @@ Route::prefix('v1')->group(function () {
         
         // Dashboard (akses semua role, tapi isinya beda)
         Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::get('/summary', [DashboardController::class, 'getSummary']);
 
         // USERS (untuk chat)
         Route::get('/users', [UserController::class, 'index']);
