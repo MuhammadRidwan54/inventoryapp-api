@@ -47,6 +47,16 @@ class BarangController extends Controller
             $query->whereRaw('stok <= stok_minimal');
         }
         
+        // Filter status aktif: default hanya tampilkan aktif
+        // ?is_active=true  → hanya aktif
+        // ?is_active=false → hanya nonaktif
+        // ?is_active=all   → semua
+        $isActiveParam = $request->get('is_active', 'true');
+        if ($isActiveParam !== 'all') {
+            $isActive = filter_var($isActiveParam, FILTER_VALIDATE_BOOLEAN);
+            $query->where('is_active', $isActive);
+        }
+        
         $sortBy = $request->sort_by ?? 'created_at';
         $sortOrder = $request->sort_order ?? 'desc';
         $query->orderBy($sortBy, $sortOrder);
@@ -69,15 +79,16 @@ class BarangController extends Controller
         try {
             // Create barang
             $barang = Barang::create([
-                'nama' => $request->nama,
-                'sku' => $request->sku,
-                'deskripsi' => $request->deskripsi,
-                'stok' => $request->stok_awal ?? 0,
+                'nama'         => $request->nama,
+                'sku'          => $request->sku,
+                'deskripsi'    => $request->deskripsi,
+                'stok'         => $request->stok_awal ?? 0,
                 'stok_minimal' => $request->stok_minimal ?? 0,
-                'satuan' => $request->satuan,
-                'kategori_id' => $request->kategori_id,
-                'supplier_id' => $request->supplier_id,
-                'created_by' => $request->user()->id,
+                'satuan'       => $request->satuan,
+                'kategori_id'  => $request->kategori_id,
+                'supplier_id'  => $request->supplier_id,
+                'created_by'   => $request->user()->id,
+                'is_active'    => $request->is_active ?? true,
             ]);
             
             Log::info('Barang created: ' . $barang->id);
@@ -186,12 +197,12 @@ class BarangController extends Controller
                 if ($field !== 'updated_at') {
                     HistoriBarang::create([
                         'barang_id' => $barang->id,
-                        'user_id' => $request->user()->id,
-                        'field' => $field,
+                        'user_id'   => $request->user()->id,
+                        'field'     => $field,
                         'old_value' => $oldData[$field] ?? null,
                         'new_value' => $newValue,
-                        'aksi' => 'update',
-                        'ip_address' => $request->ip(),
+                        'aksi'      => 'update',
+                        'ip_address'=> $request->ip(),
                     ]);
                 }
             }
@@ -354,5 +365,52 @@ class BarangController extends Controller
             'message' => 'Foto berhasil diupload',
             'data' => $uploadedFotos
         ]);
+    }
+
+    public function toggleActive(Request $request, Barang $barang)
+    {
+        DB::beginTransaction();
+        
+        try {
+            $oldStatus = $barang->is_active;
+            $newStatus = !$oldStatus;
+            
+            $barang->update(['is_active' => $newStatus]);
+            
+            HistoriBarang::create([
+                'barang_id' => $barang->id,
+                'user_id'   => $request->user()->id,
+                'field'     => 'is_active',
+                'old_value' => $oldStatus ? '1' : '0',
+                'new_value' => $newStatus ? '1' : '0',
+                'aksi'      => 'update',
+                'ip_address'=> $request->ip(),
+            ]);
+            
+            $statusText = $newStatus ? 'mengaktifkan' : 'menonaktifkan';
+            AktivitasUser::log(
+                $request->user(),
+                'toggle_active_barang',
+                'Barang',
+                $barang->id,
+                ucfirst($statusText) . " barang: {$barang->nama}"
+            );
+            
+            DB::commit();
+            
+            return response()->json([
+                'message' => "Barang berhasil di" . ($newStatus ? 'aktifkan' : 'nonaktifkan'),
+                'data' => $barang
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Toggle active error: ' . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'Gagal mengubah status aktif barang',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

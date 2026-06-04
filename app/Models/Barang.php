@@ -52,12 +52,26 @@ class Barang extends Model
         'kategori_id',
         'supplier_id',
         'created_by',
+        'is_active',
     ];
 
     protected $casts = [
-        'stok' => 'integer',
+        'stok'       => 'integer',
         'stok_minimal' => 'integer',
+        'is_active'  => 'boolean',
     ];
+
+    // Scope: hanya barang aktif
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    // Scope: hanya barang nonaktif
+    public function scopeNonaktif($query)
+    {
+        return $query->where('is_active', false);
+    }
 
     // Relationships
     public function kategori(): Relations\BelongsTo

@@ -73,6 +73,9 @@ Route::prefix('v1')->group(function () {
             Route::delete('barang/{barang}/foto/{foto}', [BarangController::class, 'deleteFoto']);
             Route::put('barang/{barang}/foto/{foto}/primary', [BarangController::class, 'setPrimaryFoto']);
             Route::post('barang/{barang}/fotos', [BarangController::class, 'uploadFoto']);
+            
+            // Toggle status aktif/nonaktif barang
+            Route::patch('barang/{barang}/toggle-active', [BarangController::class, 'toggleActive']);
         });
         
         // STOK - gudang, admin, owner bisa
@@ -84,8 +87,8 @@ Route::prefix('v1')->group(function () {
             Route::get('/mutasi', [StokController::class, 'mutasi']);
             Route::get('/rekap', [StokController::class, 'rekap']);
             
-            // Hanya owner & admin yang bisa akses
-            Route::middleware('role:owner,admin')->group(function () {
+            // Hanya admin & gudang yang bisa akses
+            Route::middleware('role:admin,gudang')->group(function () {
                 Route::post('/adjust', [StokController::class, 'adjust']);
             });
         });

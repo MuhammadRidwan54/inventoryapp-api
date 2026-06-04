@@ -18,16 +18,18 @@ class BarangRequest extends FormRequest
         $barangId = $this->route('barang')?->id;
         
         return [
-            'nama' => 'required|string|max:255',
-            'sku' => ['required', 'string', 'max:100', Rule::unique('barang', 'sku')->ignore($barangId)],
-            'deskripsi' => 'nullable|string',
-            'stok_awal' => 'required_if:is_create,true|nullable|integer|min:0',
+            'nama'         => 'required|string|max:255',
+            'sku'          => ['required', 'string', 'max:100', Rule::unique('barang', 'sku')->ignore($barangId)],
+            'deskripsi'    => 'nullable|string',
+            'stok_awal'    => 'required_if:is_create,true|nullable|integer|min:0',
             'stok_minimal' => 'nullable|integer|min:0',
-            'satuan' => 'required|string|max:50|in:pcs,kg,gram,meter,liter,unit',
-            'kategori_id' => 'required|exists:kategori,id',
-            'supplier_id' => 'nullable|exists:suppliers,id',
-            'fotos' => 'nullable|array',
-            'fotos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            // Dropdown tetap: pcs, kg, gram, meter, liter, unit, roll, lusin, kodi, rim
+            'satuan'       => 'required|string|max:50|in:pcs,kg,gram,meter,liter,unit,roll,lusin,kodi,rim',
+            'kategori_id'  => 'required|exists:kategori,id',
+            'supplier_id'  => 'nullable|exists:suppliers,id',
+            'is_active'    => 'nullable|boolean',
+            'fotos'        => 'nullable|array',
+            'fotos.*'      => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
     
